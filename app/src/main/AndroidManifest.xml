@@ -3,6 +3,7 @@
     package="com.test.sun.protectservice">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- <uses-permission-sdk-23 android:name="android.permission.CAMERA" />-->
 
     <application
         android:name=".protectservice.MApp"
@@ -50,8 +51,6 @@
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
         </receiver>
-
-
     </application>
 
 </manifest>

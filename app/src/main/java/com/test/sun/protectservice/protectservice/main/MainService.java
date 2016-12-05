@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.test.sun.protectservice.protectservice.assist.AssistService;
@@ -21,90 +22,96 @@ public class MainService extends Service {
 
     public static final String TAG = "MainService";
     public static final int MAIN = 0x100;
-    public static final int TIME = 1 * 1000;
+    public static final int TIME = 500;
+    public static final int BINDER_CODE = 0x10;
 
+    private HandlerThread mThread;
+    private Handler mHandler;
 
     private String packageName = "com.test.sun.protectservice.protectservice.assist";
     private String className = "AssistService";
     private String fullName = packageName + "." + className;
-    private boolean isConnected = false;
-
-
-    private HandlerThread mThread;
-    private Handler mHandler;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             Log.i("info", TAG + ":onServiceConnected----------------------");
-            isConnected = true;
+            stopCheckThread();
+            try {
+                iBinder.linkToDeath(new IBinder.DeathRecipient() {
+                    @Override
+                    public void binderDied() {
+                        Log.i("info", TAG + ":binderDied----------------------");
+                        reconnect();
+                    }
+                }, BINDER_CODE);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             Log.i("info", TAG + ":onServiceDisconnected----------------------");
-            isConnected = false;
-            startOther();
         }
     };
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.i("info", TAG + ":onCreate----------------------");
+    private void reconnect() {
+        Log.i("info", TAG + ":reconnect----------------------");
+        if (isAlive(fullName)) {
+            bindOther();
+        } else {
+            startCheckThread();
+        }
+    }
+
+    private void stopCheckThread() {
+        Log.i("info", TAG + ":stopCheckThread----------------------");
+        if (mHandler != null) {
+            mHandler.removeMessages(MAIN);
+            if (mThread != null) {
+                mThread.quit();
+                mHandler = null;
+                mThread = null;
+            }
+        }
+    }
+
+    private void startCheckThread() {
+        Log.i("info", TAG + ":startCheckThread----------------------");
         mThread = new HandlerThread("main");
         mThread.start();
-
         mHandler = new Handler(mThread.getLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                Log.i("info", "MainService:handleMessage----------------------");
+                Log.i("info", TAG + ":handleMessage----------------------");
                 startOther();
-                mHandler.sendEmptyMessageDelayed(MAIN, TIME);
+                if (isAlive(fullName)) {
+                    bindOther();
+                } else {
+                    mHandler.sendEmptyMessageDelayed(MAIN, TIME);
+                }
             }
         };
-
-        mHandler.sendEmptyMessageDelayed(MAIN, TIME);
-
-
+        mHandler.sendEmptyMessage(MAIN);
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
 
-//        new Thread() {
-//            @Override
-//            public void run() {
-//                super.run();
-//                while (true) {
-//                    try {
-//                        Thread.sleep(3 * 1000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    Log.i("info", "--MainService:run--");
-//                }
-//            }
-//        }.start();
-
-        return START_STICKY;
+    private void bindOther() {
+        Log.i("info", TAG + ":bindOther----------------------");
+        Intent intent0 = new Intent();
+        intent0.setClassName(getApplicationContext(), fullName);
+        bindService(intent0, connection, BIND_AUTO_CREATE);
     }
+
 
     private void startOther() {
+        Log.i("info", TAG + ":startOther----------------------");
         if (!isAlive(fullName)) {
             Intent intent0 = new Intent();
             intent0.setClassName(getApplicationContext(), fullName);
             startService(intent0);
-//            try {
-//                Thread.sleep(5 * 1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            Intent intent = new Intent();
-//            intent.setClassName(getApplicationContext(), fullName);
-//            bindService(intent, connection, BIND_AUTO_CREATE);
         }
-
     }
 
     public boolean isAlive(String fullName) {
@@ -118,17 +125,29 @@ public class MainService extends Service {
                 return true;
             }
         }
-        Log.i("info", "***************target dont exists**********************");
+        Log.i("info", "***************target do not exists**********************");
         return false;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.i("info", TAG + ":onCreate----------------------");
+        startCheckThread();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i("info", TAG + ":onStartCommand----------------------");
+        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         Log.i("info", TAG + ":onDestroy----------------------");
-//        unbindService(connection);
+        unbindService(connection);
         super.onDestroy();
-        mHandler.removeMessages(MAIN);
-        mThread.quit();
+        stopCheckThread();
     }
 
     @Override
