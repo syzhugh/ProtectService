@@ -1,12 +1,15 @@
 package com.test.sun.protectservice.protectservice.assist;
 
 import android.app.ActivityManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -14,6 +17,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import com.test.sun.protectservice.protectservice.main.MainService;
 
@@ -29,6 +33,8 @@ public class AssistService extends Service {
     public static final int MAIN = 0x100;
     public static final int TIME = 5 * 1000;
     public static final int BINDER_CODE = 0x10;
+
+    public static final int GRAY_SERVICE_ID = 0x11;
 
     private HandlerThread mThread;
     private Handler mHandler;
@@ -94,7 +100,8 @@ public class AssistService extends Service {
                 if (isAlive(fullName)) {
                     bindOther();
                 } else {
-                    mHandler.sendEmptyMessageDelayed(MAIN, TIME);
+//                    mHandler.sendEmptyMessageDelayed(MAIN, TIME);
+                    mHandler.sendEmptyMessage(MAIN);
                 }
             }
         };
@@ -144,7 +151,47 @@ public class AssistService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("info", TAG + ":onStartCommand----------------------");
+        if (Build.VERSION.SDK_INT < 18) {
+            startForeground(GRAY_SERVICE_ID, new Notification());//API < 18 ，此方法能有效隐藏Notification上的图标
+        } else {
+            Intent innerIntent = new Intent(this, GrayInnerService.class);
+            startService(innerIntent);
+            startForeground(GRAY_SERVICE_ID, new Notification());
+        }
+
+        new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    Log.i("print", "Assist:run----------------------");
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+
         return START_STICKY;
+    }
+
+    public static class GrayInnerService extends Service {
+
+        @Override
+        public int onStartCommand(Intent intent, int flags, int startId) {
+            startForeground(GRAY_SERVICE_ID, new Notification());
+            stopForeground(true);
+            stopSelf();
+            return super.onStartCommand(intent, flags, startId);
+        }
+
+        @Nullable
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
+
     }
 
     @Override

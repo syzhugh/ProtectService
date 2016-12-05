@@ -3,6 +3,7 @@
     package="com.test.sun.protectservice">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- <uses-permission-sdk-23 android:name="android.permission.CAMERA" />-->
 
     <application
@@ -15,7 +16,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -25,14 +25,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <receiver android:name=".protectservice.main.MainReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
-            </intent-filter>
-        </receiver>
+        <receiver android:name=".protectservice.main.MainReceiver" />
 
         <service
             android:name=".protectservice.assist.AssistService"
@@ -44,13 +37,43 @@
             android:name=".protectservice.assist.AssistReceiver"
             android:process=":assist">
             <intent-filter>
-                <action android:name="testprotect" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" /><!--开机-->
+                <action android:name="android.intent.action.USER_PRESENT" /><!--解锁屏幕-->
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" /><!--电源-->
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" /><!--电池-->
+                <action android:name="android.intent.action.BATTERY_OKAY" />
+                <action android:name="android.intent.action.BATTERY_LOW" />
+                <action android:name="android.intent.action.WALLPAPER_CHANGED" /><!--壁纸-->
+                <action android:name="android.intent.action.AIRPLANE_MODE" /><!--飞行模式-->
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" /><!--时间设置-->
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.HEADSET_PLUG" /><!--耳机  无效-->
             </intent-filter>
         </receiver>
+
+
+        <service
+            android:name=".TestService"
+            android:enabled="true"
+            android:process=":remote" />
+
+        <!--<receiver android:name=".protectservice.TestReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />&lt;!&ndash;开机&ndash;&gt;
+                <action android:name="android.intent.action.USER_PRESENT" />&lt;!&ndash;解锁屏幕&ndash;&gt;
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />&lt;!&ndash;电源&ndash;&gt;
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" />&lt;!&ndash;电池&ndash;&gt;
+                <action android:name="android.intent.action.BATTERY_OKAY" />
+                <action android:name="android.intent.action.BATTERY_LOW" />
+                <action android:name="android.intent.action.WALLPAPER_CHANGED" />&lt;!&ndash;壁纸&ndash;&gt;
+                <action android:name="android.intent.action.AIRPLANE_MODE" />&lt;!&ndash;飞行模式&ndash;&gt;
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />&lt;!&ndash;时间设置&ndash;&gt;
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.HEADSET_PLUG" />&lt;!&ndash;耳机  无效&ndash;&gt;
+            </intent-filter>
+        </receiver>-->
     </application>
 
 </manifest>

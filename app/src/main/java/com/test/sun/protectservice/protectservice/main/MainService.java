@@ -89,7 +89,8 @@ public class MainService extends Service {
                 if (isAlive(fullName)) {
                     bindOther();
                 } else {
-                    mHandler.sendEmptyMessageDelayed(MAIN, TIME);
+//                    mHandler.sendEmptyMessageDelayed(MAIN, TIME);
+                    mHandler.sendEmptyMessage(MAIN);
                 }
             }
         };
@@ -139,6 +140,21 @@ public class MainService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("info", TAG + ":onStartCommand----------------------");
+
+        new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    Log.i("print", "MainService:run----------------------");
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+
         return START_STICKY;
     }
 
