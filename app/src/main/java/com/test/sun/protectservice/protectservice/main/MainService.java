@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.Process;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -119,10 +120,11 @@ public class MainService extends Service {
         ActivityManager am = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> services = am.getRunningServices(100);
         for (ActivityManager.RunningServiceInfo info : services) {
-            String name = info.service.getClassName();
-            if (fullName.equals(name)) {
+            Log.i("info", ":" + info.service.getShortClassName());
+            if (fullName.equals(info.service.getClassName()) && info.pid != 0) {
                 Log.i("info", "***************target exists**********************");
                 Log.i("info", ":" + info.pid);
+                Log.i("info", ":" + info.started);
                 return true;
             }
         }
@@ -130,11 +132,35 @@ public class MainService extends Service {
         return false;
     }
 
+    public static final String APP_ID = "2882303761517530544";
+    public static final String APP_KEY = "5811753074544";
+
     @Override
     public void onCreate() {
         super.onCreate();
         Log.i("info", TAG + ":onCreate----------------------");
         startCheckThread();
+
+
+        initMiPush();
+    }
+
+    private void initMiPush() {
+        Log.i("info", "MainService:initMiPush----------------------");
+    }
+
+    private boolean shouldInit() {
+        ActivityManager am = ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE));
+        List<ActivityManager.RunningAppProcessInfo> processInfos = am.getRunningAppProcesses();
+        String mainProcessName = getPackageName();
+        int myPid = Process.myPid();
+        for (ActivityManager.RunningAppProcessInfo info : processInfos) {
+//            Log.i("info", " pid: " + info.pid + " processName: " + info.processName);
+            if (info.pid == myPid && mainProcessName.equals(info.processName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

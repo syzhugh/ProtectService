@@ -100,7 +100,6 @@ public class AssistService extends Service {
                 if (isAlive(fullName)) {
                     bindOther();
                 } else {
-//                    mHandler.sendEmptyMessageDelayed(MAIN, TIME);
                     mHandler.sendEmptyMessage(MAIN);
                 }
             }
@@ -130,10 +129,11 @@ public class AssistService extends Service {
         ActivityManager am = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> services = am.getRunningServices(100);
         for (ActivityManager.RunningServiceInfo info : services) {
-            String name = info.service.getClassName();
-            if (fullName.equals(name)) {
+            Log.i("info", ":" + info.service.getShortClassName());
+            if (fullName.equals(info.service.getClassName()) && info.pid != 0) {
                 Log.i("info", "***************target exists**********************");
                 Log.i("info", ":" + info.pid);
+                Log.i("info", ":" + info.started);
                 return true;
             }
         }
@@ -151,27 +151,27 @@ public class AssistService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("info", TAG + ":onStartCommand----------------------");
-        if (Build.VERSION.SDK_INT < 18) {
-            startForeground(GRAY_SERVICE_ID, new Notification());//API < 18 ，此方法能有效隐藏Notification上的图标
-        } else {
-            Intent innerIntent = new Intent(this, GrayInnerService.class);
-            startService(innerIntent);
-            startForeground(GRAY_SERVICE_ID, new Notification());
-        }
-
-        new Thread() {
-            @Override
-            public void run() {
-                while (true) {
-                    Log.i("print", "Assist:run----------------------");
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
+//        if (Build.VERSION.SDK_INT < 18) {
+//            startForeground(GRAY_SERVICE_ID, new Notification());//API < 18 ，此方法能有效隐藏Notification上的图标
+//        } else {
+//            Intent innerIntent = new Intent(this, GrayInnerService.class);
+//            startService(innerIntent);
+//            startForeground(GRAY_SERVICE_ID, new Notification());
+//        }
+//
+//        new Thread() {
+//            @Override
+//            public void run() {
+//                while (true) {
+//                    Log.i("print", "Assist:run----------------------");
+//                    try {
+//                        Thread.sleep(2000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }.start();
 
         return START_STICKY;
     }
