@@ -27,23 +27,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 //        startService();
-//        testBindAndStart();
-//        testPermission();
-//        int i = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_BOOT_COMPLETED);
-//
-//        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-//        intent.setData(Uri.parse("package:" + getPackageName()));
-//        startActivity(intent);
-//
-//
-//        if (i == PackageManager.PERMISSION_GRANTED) {
-//            Log.i("info", ":" + true);
-//            Toast.makeText(this, "true", Toast.LENGTH_LONG).show();
-//        } else {
-//            Log.i("info", ":" + false);
-//            Toast.makeText(this, "false", Toast.LENGTH_LONG).show();
-//        }
 
+        startForeService();
+    }
+
+    private void startForeService() {
+        Intent intentX = new Intent();
+        intentX.setClassName(MainActivity.this, "com.test.sun.protectservice.foregroundservice.ForeService");
+        startService(intentX);
     }
 
     private void startService() {
@@ -70,27 +61,4 @@ public class MainActivity extends AppCompatActivity {
         }, BIND_AUTO_CREATE);
     }
 
-    private void testPermission() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            int checkCallPhonePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-            if (checkCallPhonePermission != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 100);
-                return;
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        Log.i("info", ":" + requestCode);
-        for (String temp : permissions) {
-            Log.i("info", ":" + temp);
-        }
-        for (int temp : grantResults) {
-            Log.i("info", ":" + temp);
-        }
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 }

@@ -58,6 +58,12 @@
             android:enabled="true"
             android:process=":remote" />
 
+        <service
+            android:name=".foregroundservice.ForeService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":fore" />
+
         <!--<receiver android:name=".protectservice.TestReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />&lt;!&ndash;开机&ndash;&gt;
