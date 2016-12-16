@@ -1,5 +1,6 @@
 package com.test.sun.protectservice;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -11,34 +12,40 @@ import android.util.Log;
  */
 
 public class TestService extends Service {
+
+    public static final String TAG = "TestService";
+
     @Override
+
     public void onCreate() {
-        Log.i("info", "TestService:onCreate----------------------");
+        Log.i(TAG, "TestService:onCreate----------------");
         super.onCreate();
     }
 
     @Override
-    public void onDestroy() {
-        Log.i("info", "TestService:onDestroy----------------------");
-        super.onDestroy();
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        Log.i("info", "TestService:onUnbind----------------------");
-        return super.onUnbind(intent);
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(TAG, "TestService:onStartCommand----------------");
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.i("info", "TestService:onBind----------------------");
+        Log.i(TAG, "TestService:onBind----------------");
         return null;
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("info", "TestService:onStartCommand----------------------");
-        return super.onStartCommand(intent, flags, startId);
+    public boolean onUnbind(Intent intent) {
+        Log.i(TAG, "TestService:onUnbind----------------");
+        return super.onUnbind(intent);
     }
+
+    @Override
+    public void onDestroy() {
+        Log.i(TAG, "TestService:onDestroy----------------");
+        super.onDestroy();
+    }
+
+
 }

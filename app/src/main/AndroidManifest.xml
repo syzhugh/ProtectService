@@ -4,10 +4,9 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- <uses-permission-sdk-23 android:name="android.permission.CAMERA" />-->
+
 
     <application
-        android:name=".protectservice.MApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -20,6 +19,8 @@
             </intent-filter>
         </activity>
 
+
+        <!--相互唤醒，失败-->
         <service
             android:name=".protectservice.main.MainService"
             android:enabled="true"
@@ -52,28 +53,48 @@
             </intent-filter>
         </receiver>
 
-
+        <!--前台服务，失败-->
         <service
-            android:name=".TestService"
+            android:name=".foregroundservice.ForeService"
             android:enabled="true"
-            android:process=":remote" />
+            android:exported="true"
+            android:process=":fore" />
 
-        <!--<receiver android:name=".protectservice.TestReceiver">
+        <!--辅助功能，有点效果-->
+        <service
+            android:name=".accessibility.MAccessibilityService"
+            android:label="@string/accessibility_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:process=":assist">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />&lt;!&ndash;开机&ndash;&gt;
-                <action android:name="android.intent.action.USER_PRESENT" />&lt;!&ndash;解锁屏幕&ndash;&gt;
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />&lt;!&ndash;电源&ndash;&gt;
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.BATTERY_CHANGED" />&lt;!&ndash;电池&ndash;&gt;
-                <action android:name="android.intent.action.BATTERY_OKAY" />
-                <action android:name="android.intent.action.BATTERY_LOW" />
-                <action android:name="android.intent.action.WALLPAPER_CHANGED" />&lt;!&ndash;壁纸&ndash;&gt;
-                <action android:name="android.intent.action.AIRPLANE_MODE" />&lt;!&ndash;飞行模式&ndash;&gt;
-                <action android:name="android.intent.action.TIMEZONE_CHANGED" />&lt;!&ndash;时间设置&ndash;&gt;
-                <action android:name="android.intent.action.TIME_SET" />
-                <action android:name="android.intent.action.HEADSET_PLUG" />&lt;!&ndash;耳机  无效&ndash;&gt;
+                <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
-        </receiver>-->
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_config" />
+        </service>
+
+        <!--闹铃通知-->
+        <receiver android:name=".alarm.AlarmReceiver">
+            <intent-filter>
+                <action android:name="audio_receiver" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.USER_PRESENT" /><!--解锁屏幕-->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" /><!--电源-->
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" /><!--电池-->
+                <action android:name="android.intent.action.BATTERY_OKAY" />
+                <action android:name="android.intent.action.WALLPAPER_CHANGED" /><!--壁纸-->
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" /><!--时间设置-->
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIME_TICK" />
+            </intent-filter>
+        </receiver>
+
+
     </application>
 
 </manifest>
