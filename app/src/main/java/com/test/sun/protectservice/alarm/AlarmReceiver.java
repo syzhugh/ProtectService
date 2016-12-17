@@ -16,6 +16,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public static final String TAG = "TestVar";
 
     public static final int PI_REQUESTCODE = 0x10;
+    public static final int MINUTE = 1;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -27,12 +28,18 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     private void setAlarm(Context context) {
+        Log.i(TAG, "AlarmReceiver:setAlarm----------------");
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intentX = new Intent("audio_receiver");
-        PendingIntent pi = PendingIntent.getBroadcast(context, PI_REQUESTCODE, intentX, PendingIntent.FLAG_CANCEL_CURRENT);
+//        Intent intentX = new Intent("audio_receiver");
+//        PendingIntent pi = PendingIntent.getBroadcast(context, PI_REQUESTCODE, intentX, PendingIntent.FLAG_CANCEL_CURRENT);
+        Intent intentX = new Intent();
+        intentX.setClassName(context, "com.test.sun.protectservice.TestService");
+        PendingIntent pi = PendingIntent.getService(context, PI_REQUESTCODE, intentX, PendingIntent.FLAG_CANCEL_CURRENT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Log.i(TAG, "setAlarm:start");
             manager.setExact(AlarmManager.RTC_WAKEUP, getTriggerTime(), pi);
         } else {
+            Log.i(TAG, "setAlarm:start");
             manager.setRepeating(AlarmManager.RTC_WAKEUP, getTriggerTime(), getIntervalTime(), pi);
         }
     }
@@ -42,10 +49,12 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     private long getIntervalTime() {
-        return 5 * 60 * 1000;
+        return MINUTE * 60 * 1000;
     }
 
     private void startMyService(Context context) {
-
+        Intent intentX = new Intent();
+        intentX.setClassName(context, "com.test.sun.protectservice.TestService");
+        context.startService(intentX);
     }
 }

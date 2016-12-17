@@ -14,8 +14,21 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEARCH" />
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".TestActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <data android:mimeType="audio/x-mpeg"></data>
             </intent-filter>
         </activity>
 
@@ -60,6 +73,11 @@
             android:exported="true"
             android:process=":fore" />
 
+        <service
+            android:name=".TestService"
+            android:enabled="true"
+            android:exported="true" />
+
         <!--辅助功能，有点效果-->
         <service
             android:name=".accessibility.MAccessibilityService"
@@ -94,6 +112,17 @@
             </intent-filter>
         </receiver>
 
+
+        <receiver android:name=".widget.MWidget">
+            <intent-filter>
+                <action android:name="test_aaa" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="MWidget_click" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_test" />
+        </receiver>
 
     </application>
 

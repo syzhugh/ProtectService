@@ -13,8 +13,7 @@ import android.util.Log;
 
 public class TestService extends Service {
 
-    public static final String TAG = "TestService";
-
+public static final String TAG = "TestVar";
     @Override
 
     public void onCreate() {

@@ -27,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 //        startService();
-
-        startForeService();
+        Intent intentX = new Intent();
+        intentX.setClassName(this, "com.test.sun.protectservice.TestService");
+        startService(intentX);
     }
 
     private void startForeService() {
@@ -42,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
         intent0.setComponent(new ComponentName(MainActivity.this, "com.test.sun.protectservice.protectservice.assist.AssistService"));
         startService(intent0);
     }
-
 
 
 }
