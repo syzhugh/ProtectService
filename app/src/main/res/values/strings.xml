@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ProtectService</string>
+    <string name="accessibility_service_label">accessibility_service_label</string>
+    <string name="accessibility_description">accessibility_description</string>
 </resources>

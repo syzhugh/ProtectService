@@ -3,10 +3,10 @@
     package="com.test.sun.protectservice">
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <!-- <uses-permission-sdk-23 android:name="android.permission.CAMERA" />-->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
 
     <application
-        android:name=".protectservice.MApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,25 +14,32 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEARCH" />
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".TestActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <data android:mimeType="audio/x-mpeg"></data>
+            </intent-filter>
+        </activity>
 
+
+        <!--相互唤醒，失败-->
         <service
             android:name=".protectservice.main.MainService"
             android:enabled="true"
             android:exported="true" />
 
-        <receiver android:name=".protectservice.main.MainReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
-            </intent-filter>
-        </receiver>
+        <receiver android:name=".protectservice.main.MainReceiver" />
 
         <service
             android:name=".protectservice.assist.AssistService"
@@ -44,13 +51,79 @@
             android:name=".protectservice.assist.AssistReceiver"
             android:process=":assist">
             <intent-filter>
-                <action android:name="testprotect" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" /><!--开机-->
+                <action android:name="android.intent.action.USER_PRESENT" /><!--解锁屏幕-->
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" /><!--电源-->
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" /><!--电池-->
+                <action android:name="android.intent.action.BATTERY_OKAY" />
+                <action android:name="android.intent.action.BATTERY_LOW" />
+                <action android:name="android.intent.action.WALLPAPER_CHANGED" /><!--壁纸-->
+                <action android:name="android.intent.action.AIRPLANE_MODE" /><!--飞行模式-->
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" /><!--时间设置-->
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.HEADSET_PLUG" /><!--耳机  无效-->
             </intent-filter>
         </receiver>
+
+        <!--前台服务，失败-->
+        <service
+            android:name=".foregroundservice.ForeService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":fore" />
+
+        <service
+            android:name=".TestService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <!--辅助功能，有点效果-->
+        <service
+            android:name=".accessibility.MAccessibilityService"
+            android:label="@string/accessibility_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:process=":assist">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_config" />
+        </service>
+
+        <!--闹铃通知-->
+        <receiver android:name=".alarm.AlarmReceiver">
+            <intent-filter>
+                <action android:name="audio_receiver" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.USER_PRESENT" /><!--解锁屏幕-->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" /><!--电源-->
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" /><!--电池-->
+                <action android:name="android.intent.action.BATTERY_OKAY" />
+                <action android:name="android.intent.action.WALLPAPER_CHANGED" /><!--壁纸-->
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" /><!--时间设置-->
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIME_TICK" />
+            </intent-filter>
+        </receiver>
+
+
+        <receiver android:name=".widget.MWidget">
+            <intent-filter>
+                <action android:name="test_aaa" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="MWidget_click" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_test" />
+        </receiver>
+
     </application>
 
 </manifest>
