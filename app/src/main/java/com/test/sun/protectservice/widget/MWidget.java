@@ -7,13 +7,14 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.test.sun.protectservice.MainActivity;
 import com.test.sun.protectservice.R;
-import com.test.sun.protectservice.TestService;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by ZS27 on 2016/12/17.
@@ -27,11 +28,10 @@ public class MWidget extends AppWidgetProvider {
         super();
     }
 
-
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        Log.i(TAG, "MWidget:onReceive----------------");
+        Log.i(TAG, "MWidget:onReceive----------------" + intent.getAction());
 
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent test_aaa = PendingIntent.getBroadcast(context, 101, new Intent("test_aaa"), PendingIntent.FLAG_CANCEL_CURRENT);
@@ -47,13 +47,17 @@ public class MWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+
+        MyTask mMyTask = new MyTask(context);
+        Timer myTimer = new Timer();
+        myTimer.schedule(mMyTask, anInt, anInt);
+
+
         super.onUpdate(context, appWidgetManager, appWidgetIds);
         Log.i(TAG, "MWidget:onUpdate----------------" + appWidgetIds.length);
 
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-        PendingIntent test_aaa = PendingIntent.getBroadcast(context, 101, new Intent("test_aaa"), PendingIntent.FLAG_CANCEL_CURRENT);
-
+        PendingIntent test_aaa = PendingIntent.getBroadcast(context, 501, new Intent("test_aaa"), PendingIntent.FLAG_CANCEL_CURRENT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Log.i(TAG, "setAlarm:start");
             manager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + anInt, test_aaa);
@@ -62,12 +66,30 @@ public class MWidget extends AppWidgetProvider {
             manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + anInt, anInt, test_aaa);
         }
 
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_liner);
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_linear);
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pi = PendingIntent.getActivity(context, 100, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pi = PendingIntent.getActivity(context, 500, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.widget_bt, pi);
         appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);
+    }
+
+    class MyTask extends TimerTask {
+
+        private Context mcontext = null;
+        private Intent intent = null;
+
+        public MyTask(Context context) {
+            mcontext = context;
+            intent = new Intent();
+            intent.setAction("test_aaa");
+        }
+
+        @Override
+        public void run() {
+            Log.i(TAG, "MyTask:run----------------");
+            mcontext.sendBroadcast(intent);
+        }
     }
 
     @Override
