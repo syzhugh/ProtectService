@@ -32,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
             File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ddkj/ddkj.apk");
             if (file.exists()) {
                 Log.i(TAG, "file:true");
-                boolean b1 = SysApp.writeToSystemApp(file);
+//                boolean b1 = SysApp.writeToSystemApp(file);
+                boolean b1 = SysApp.delFromSystemApp(file);
                 Log.i(TAG, "file:" + b1);
             }
         }

@@ -53,11 +53,9 @@ public class SysApp {
             return false;
         }
         String systemState = "mount -o remount /system";
-
-        StringBuilder moveFile = new StringBuilder("mv" + " ");
+        StringBuilder moveFile = new StringBuilder("cp -f ");
         moveFile.append(file.getAbsoluteFile());
-        moveFile.append(" " + "/system/app");
-
+        moveFile.append(" /system/app");
         String chmod = "chmod 755 /system/app/" + file.getName();
         String chown = "chown root:root /system/app/" + file.getName();
 
@@ -71,6 +69,52 @@ public class SysApp {
             os.writeBytes(moveFile.toString() + "\n");
             os.writeBytes(chmod + "\n");
             os.writeBytes(chown + "\n");
+            os.writeBytes("exit\n");
+            os.flush();
+            process.waitFor();
+        } catch (Exception e) {
+            Log.d("*** DEBUG ***", "ROOT REE" + e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean delFromSystemApp(File file) {
+        if (!file.exists()) {
+            return false;
+        }
+        String systemState = "mount -o remount /system";
+        String delFile = "rm /system/app/" + file.getName();
+
+        Process process = null;
+        DataOutputStream os = null;
+
+        try {
+            process = Runtime.getRuntime().exec("su");
+            os = new DataOutputStream(process.getOutputStream());
+            os.writeBytes(systemState + "\n");
+            os.writeBytes(delFile + "\n");
+            os.writeBytes("exit\n");
+            os.flush();
+            process.waitFor();
+        } catch (Exception e) {
+            Log.d("*** DEBUG ***", "ROOT REE" + e.getMessage());
+            return false;
+        }
+        return true;
+
+    }
+
+    public static boolean reboot() {
+        String reboot = "reboot";
+
+        Process process = null;
+        DataOutputStream os = null;
+
+        try {
+            process = Runtime.getRuntime().exec("su");
+            os = new DataOutputStream(process.getOutputStream());
+            os.writeBytes(reboot + "\n");
             os.writeBytes("exit\n");
             os.flush();
             process.waitFor();
