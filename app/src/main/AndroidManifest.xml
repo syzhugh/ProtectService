@@ -157,9 +157,13 @@
 
         <!--刷入系统应用策略-->
 
-        <receiver android:name=".root.Rooted_Receiver">
+        <receiver
+            android:name=".root.Rooted_Receiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="rooted" />
+                <action android:name="simulateBOOT" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.TIME_TICK" />
                 <action android:name="android.intent.action.USER_PRESENT" />
@@ -167,11 +171,7 @@
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
         </receiver>
-        <service android:name=".root.Rooted_Service">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </service>
+        <service android:name=".root.Rooted_Service"></service>
     </application>
 
 </manifest>

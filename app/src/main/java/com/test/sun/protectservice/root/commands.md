@@ -4,7 +4,7 @@
 
 pc:
 
-adb push C:/Sun/AndroidWorkSpace/ProtectService/app/build/outputs/apk /sdcard/ddkj
+adb push C:/Sun/AndroidWorkSpace/ProtectService/app/build/outputs/apk/app-debug.apk /sdcard/ddkj
 
 shell:
 
