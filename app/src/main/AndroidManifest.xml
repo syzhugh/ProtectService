@@ -4,7 +4,10 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.MOUNT_FORMAT_FILESYSTEMS" />
 
     <application
         android:allowBackup="true"
@@ -21,6 +24,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".TestService"
+            android:enabled="true"
+            android:exported="true" />
+
+
         <activity android:name=".TestActivity">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -33,8 +43,43 @@
         </activity>
 
 
-        <!--相互唤醒，失败-->
-        <service
+        <!--*****************有效途径*********************************************************************-->
+
+        <!--彩笔乐视有效，其余无效-->
+        <!--<service
+            android:name=".accessibility.MAccessibilityService"
+            android:label="@string/accessibility_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:process=":assist">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_config" />
+        </service>-->
+
+        <!--系统应用策略，小米开发有效，魅族假root无效-->
+        <!--<receiver
+            android:name=".root.Rooted_Receiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="rooted" />
+                <action android:name="simulateBOOT" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_TICK" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".root.Rooted_Service"></service>-->
+
+
+        <!--*****************无效途径*********************************************************************-->
+        <!--相互唤醒策略，无效-->
+        <!--<service
             android:name=".protectservice.main.MainService"
             android:enabled="true"
             android:exported="true" />
@@ -51,78 +96,93 @@
             android:name=".protectservice.assist.AssistReceiver"
             android:process=":assist">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" /><!--开机-->
-                <action android:name="android.intent.action.USER_PRESENT" /><!--解锁屏幕-->
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" /><!--电源-->
+                <action android:name="android.intent.action.BOOT_COMPLETED" />;
+                <action android:name="android.intent.action.USER_PRESENT" />;
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />;
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.BATTERY_CHANGED" /><!--电池-->
+                <action android:name="android.intent.action.BATTERY_CHANGED" />;
                 <action android:name="android.intent.action.BATTERY_OKAY" />
                 <action android:name="android.intent.action.BATTERY_LOW" />
-                <action android:name="android.intent.action.WALLPAPER_CHANGED" /><!--壁纸-->
-                <action android:name="android.intent.action.AIRPLANE_MODE" /><!--飞行模式-->
-                <action android:name="android.intent.action.TIMEZONE_CHANGED" /><!--时间设置-->
+                <action android:name="android.intent.action.WALLPAPER_CHANGED" />;
+                <action android:name="android.intent.action.AIRPLANE_MODE" />;
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />;
                 <action android:name="android.intent.action.TIME_SET" />
-                <action android:name="android.intent.action.HEADSET_PLUG" /><!--耳机  无效-->
+                <action android:name="android.intent.action.HEADSET_PLUG" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
-        <!--前台服务，失败-->
-        <service
-            android:name=".foregroundservice.ForeService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":fore" />
-
-        <service
-            android:name=".TestService"
-            android:enabled="true"
-            android:exported="true" />
-
-        <!--辅助功能，有点效果-->
-        <service
-            android:name=".accessibility.MAccessibilityService"
-            android:label="@string/accessibility_service_label"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            android:process=":assist">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/accessibility_config" />
-        </service>
-
-        <!--闹铃通知-->
-        <receiver android:name=".alarm.AlarmReceiver">
-            <intent-filter>
-                <action android:name="audio_receiver" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.MEDIA_MOUNTED" />
-                <action android:name="android.intent.action.USER_PRESENT" /><!--解锁屏幕-->
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" /><!--电源-->
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.BATTERY_CHANGED" /><!--电池-->
-                <action android:name="android.intent.action.BATTERY_OKAY" />
-                <action android:name="android.intent.action.WALLPAPER_CHANGED" /><!--壁纸-->
-                <action android:name="android.intent.action.DATE_CHANGED" />
-                <action android:name="android.intent.action.TIMEZONE_CHANGED" /><!--时间设置-->
-                <action android:name="android.intent.action.TIME_SET" />
-                <action android:name="android.intent.action.TIME_TICK" />
-            </intent-filter>
-        </receiver>
-
-
-        <receiver android:name=".widget.MWidget">
+        <!--小组件策略，基本无效-->
+        <!--<receiver android:name=".widget.MWidget">
             <intent-filter>
                 <action android:name="test_aaa" />
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="test_common" />
                 <action android:name="MWidget_click" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_test" />
         </receiver>
+
+        <receiver android:name=".widget.MAssistReceiver">
+            <intent-filter>
+                <action android:name="test_common" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>-->
+
+        <!--nls策略，整体无效，傻的死死的-->
+        <!--<service
+            android:name=".NLService.NListenerService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:process=":remote_NLS">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".NLService.NLSReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="test_nls" />
+            </intent-filter>
+        </receiver>-->
+        <!--前台服务策略，无效-->
+        <!--<service
+            android:name=".foregroundservice.ForeService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":fore" />-->
+
+        <!--闹铃通知,无效-->
+        <!--<receiver android:name=".alarm.AlarmReceiver">
+            <intent-filter>
+                <action android:name="audio_receiver" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.USER_PRESENT" />;
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />;
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" />;
+                <action android:name="android.intent.action.BATTERY_OKAY" />
+                <action android:name="android.intent.action.WALLPAPER_CHANGED" />;
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />;
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIME_TICK" />
+            </intent-filter>
+        </receiver>-->
 
     </application>
 
