@@ -46,7 +46,7 @@
         <!--*****************有效途径*********************************************************************-->
 
         <!--彩笔乐视有效，其余无效-->
-        <!--<service
+        <service
             android:name=".accessibility.MAccessibilityService"
             android:label="@string/accessibility_service_label"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
@@ -57,7 +57,7 @@
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_config" />
-        </service>-->
+        </service>
 
         <!--系统应用策略，小米开发有效，魅族假root无效-->
         <!--<receiver
