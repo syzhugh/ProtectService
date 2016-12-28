@@ -2,10 +2,13 @@ package com.test.sun.protectservice;
 
 import android.Manifest;
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -30,9 +33,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkAccessibility();
+        testBind_Start();
 
+    }
 
+    private void testBind_Start() {
+
+        Intent intentX = new Intent();
+        intentX.setClassName(this, "com.test.sun.protectservice.bindandstart.MService");
+
+        bindService(intentX, new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.i(TAG, "MainActivity:onServiceConnected----------------");
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                Log.i(TAG, "MainActivity:onServiceDisconnected----------------");
+            }
+        }, BIND_AUTO_CREATE);
+
+        startService(intentX);
     }
 
     private void checkAccessibility() {

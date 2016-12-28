@@ -184,6 +184,10 @@
             </intent-filter>
         </receiver>-->
 
+
+        <!--测试一下bind start-->
+        <service android:name=".bindandstart.MService"></service>
+
     </application>
 
 </manifest>
